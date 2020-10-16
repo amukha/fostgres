@@ -1,0 +1,101 @@
+# Add a film and tag it
+PUT film.slug /t1 (module.path.join t1.json) 200 (module.path.join t1.json)
+PUT film.slug /t1/tag/robots {} 200 {"tag": "robots"}
+
+# Film input should be trimmed
+PUT film.slug /t2 {
+    "slug": "t2",
+    "title": "\n\tTerminator2\r\f",
+    "released": "2000-12-22"
+} 200 {
+    "slug": "t2",
+    "title": "Terminator2",
+    "released": "2000-12-22"
+}
+
+# Should fail schema check after whitespace is trimmed
+PUT film.slug /t3 {
+    "slug": "t3",
+    "title": "\n\r\f",
+    "released": "2005-10-02"
+} 422
+
+# Check that the film output is correct
+GET film.slug /t1 200 {
+        "watched": {"times": 0, "last": null},
+        "tags": [
+            "robots"
+        ]}
+
+# Set a tag on the film
+PUT film.slug /t1/tag/action%20adventure {} 200 {"tag": "action adventure"}
+
+# PATCH in more tags
+PATCH film.slug /t1/tags (module.path.join tags.csj) 200 {"records": 6}
+
+# Check that the film output is still correct
+GET film.slug /t1 200 {
+        "tags": [
+            "action",
+            "action adventure",
+            "adventure",
+            "dystopian",
+            "robots",
+            "sci-fi",
+            "time-travel"
+        ]}
+GET film.slug /t1/tags 200 {"columns": ["tag"],
+    "rows": [["action"], ["action adventure"], ["adventure"], ["dystopian"], ["robots"], ["sci-fi"], ["time-travel"]]}
+
+# PUT in a new tag and make sure it's there
+PUT film.slug /t1/tag/wrong {} 200 {"tag": "wrong"}
+GET film.slug /t1/tags 200 {"columns": ["tag"],
+    "rows": [["action"], ["action adventure"], ["adventure"],
+        ["dystopian"], ["robots"], ["sci-fi"], ["time-travel"], ["wrong"]]}
+# PATCH leaves the wrong tag in place
+PATCH film.slug /t1/tags (module.path.join tags.csj) 200 {"records": 6}
+GET film.slug /t1/tags 200 {"columns": ["tag"],
+    "rows": [["action"], ["action adventure"], ["adventure"],
+        ["dystopian"], ["robots"], ["sci-fi"], ["time-travel"], ["wrong"]]}
+# PUT removes the wrong tags in place
+PUT film.slug /t1/tags (module.path.join tags.csj) 200 {"selected": 8, "records": 6, "deleted": 2}
+GET film.slug /t1/tags 200 {"columns": ["tag"],
+    "rows": [["action"], ["adventure"], ["dystopian"], ["robots"], ["sci-fi"], ["time-travel"]]}
+
+# Check what happens with embedded white-space
+PATCH film.slug /t1/tags (module.path.join tags-tab.csj) 200 {"records": 1}
+GET film.slug /t1/tags 200 {"columns": ["tag"],
+    "rows": [["action"], ["action\tadventure"], ["adventure"],
+        ["dystopian"], ["robots"], ["sci-fi"], ["time-travel"]]}
+
+# Schema validation can reject the CSJ based on the row schema validation
+PUT film.slug /t1/tags (module.path.join tags-extra-column.csj) 422 {"error" : {
+            "assertion" : "false",
+            "in-data" : ["extra"],
+            "in-schema" : ["additionalProperties"]
+        }}
+PATCH film.slug /t1/tags (module.path.join tags-extra-column.csj) 422 {"error" : {
+            "assertion" : "false",
+            "in-data" : ["extra"],
+            "in-schema" : ["additionalProperties"]
+        }}
+# Also can reject based on column schema validation
+PUT film.slug /t1/tags (module.path.join tags-short-tag.csj) 422 {"error" : {
+            "assertion" : "minLength",
+            "in-data" : [0, "slug"],
+            "in-schema" : ["minLength"]
+        }}
+PATCH film.slug /t1/tags (module.path.join tags-short-tag.csj) 422 {"error" : {
+            "assertion" : "minLength",
+            "in-data" : [0, "slug"],
+            "in-schema" : ["minLength"]
+        }}
+
+# DELETE the tags and make sure we have the right output
+DELETE film.slug /t1/tags 200
+GET film.slug /t1 200 {"tags": []}
+
+# DELETE it make sure it is gone, and the DELETE also behaves properly
+DELETE film.slug /t1 200 (module.path.join t1.json)
+GET film.slug /t1 404
+DELETE film.slug /t1 404

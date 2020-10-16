@@ -1,0 +1,152 @@
+2020-06-30  Sukit Saeo  <sukit_owl@hotmail.com>
+ Added expect command to fg
+
+2020-06-10  Kirit Saelensminde  <kirit@felspar.com>
+ Added schema validation for CSJ PUT and PATCH requests.
+
+2020-05-29  Pam Suebvisai  <suebvisai.pam@gmail.com>
+ * Added HEAD support for `fostgres-test`.
+
+2020-04-22  Kirit Saelensminde  <kirit@felspar.com>
+ * CSJ parsing now throws a proper `parse_error`
+ * Special case `parse_error` to map to 400 responses when expected in fg tests.
+
+2019-08-21  Kirit Saelensminde  <kirit@felspar.com>
+ Improve the display of test failures from `fostgres-test`.
+
+2019-08-21  Kirit Saelensminde  <kirit@felspar.com>
+ Add sending of cookie values from `testserver.cookies` to `fostgres-test`.
+
+2019-08-19  Kirit Saelensminde  <kirit@felspar.com>
+ * Add `rm-path` to test scripts so we can remove JSON from variable values.
+ * Test scripts can now have the view JSON directly in the GET, PUT etc. calls.
+
+2019-08-13  Pattarawut Imamnuaysup  <pattarawut@hot-now.com>
+ Add schema check before insert/update into database and refactor datum for consistent trim
+
+2019-06-24  Pumidon Phathong  <pumidon@hot-now.com>
+ GET requests that don't check the body content now return the response body.
+
+2019-06-14  Kirit Saelensminde  <kirit@felspar.com>
+ Object APIs can now process JSON arrays into a separate table.
+
+2019-03-07  Kirit Saelensminde  <kirit@felspar.com>
+ Add a new view to retry Postgres serialisation errors.
+
+2019-02-22  Kirit Saelensminde  <kirit@felspar.com>
+ Add a request logging middleware that stores the per-request log to the database.
+
+2019-02-07  Tle Ekkul  <e.aryuth@gmail.com>
+ fostgres.sql supporting precondition
+
+2019-02-05  Kirit Saelensminde  <kirit@felspar.com>
+ Fixed a bug in the HTTP tests not doing name look ups correctly.
+
+2019-01-22  Kirit Saelensminde  <kirit@felspar.com>
+ Add debug logging of the database JSON schema loader.
+
+2019-01-15  Tle Ekkul  <e.aryuth@gmail.com>
+ * Add fostgres.control.pg-error view
+ * Add fostgres-tests
+
+2019-01-03  Tle Ekkul  <e.aryuth@gmail.com>
+ POST support configuration as an array
+
+2018-09-19  Kirit Saelensminde  <kirit@felspar.com>
+ Extend schema validation to fields and CSJ.
+
+2018-08-11  Kirit Saelensminde  <kirit@felspar.com>
+ * Add JSON schema validation for object `PUT` and `PATCH`.
+ * Fix the order of the expected & actual results for object request.
+ * Fix a bug in the HTTP request checking where expressions would be resolved twice.
+
+2018-07-11  Tle Ekkul  <e.aryuth@gmail.com>
+ Add fg quote function
+
+2018-06-11  Kirit Saelensminde  <kirit@felspar.com>
+ Add support for `password` configuration on the connection strings.
+
+2018-05-15  Kirit Saelensminde  <kirit@felspar.com>
+ Allow database connection string settings to come from the environment.
+
+2017-12-13  Kirit Saelensminde  <kirit@felspar.com>
+ Fix the fg parser to allow whitspace and comments in more places.
+
+2017-10-08  Kirit Saelensminde  <kirit@felspar.com>
+ * Add scripting call `setting` for manipulating settings.
+ * Add parser support for all JSON atom values.
+
+2017-09-25  Kirit Saelensminde  <kirit@felspar.com>
+ Add RETURNING support to PUT request for objects.
+
+2017-09-17  Kirit Saelensminde  <kirit@felspar.com>
+ Move some tests so Postgres is not needed for a normal build.
+
+2017-05-03  Kirit Saelensminde  <kirit@felspar.com>
+ Add -h and -U options to fostgres-test to control how to access the database.
+
+2017-04-08  Kirit Saelensminde  <kirit@felspar.com>
+ * Add a `json_recordset` adapter that allows rows to be dereferenced directly as objects.
+ * Move the location of the `column_names` API to `fostgres-core`.
+
+2017-02-18  Kirit Saelensminde  <kirit@felspar.com>
+ Added support for file uploads. JSON base 64 encoded only.
+
+2017-01-13  Kirit Saelensminde  <kirit@felspar.com>
+ Update for new internal structure of `fostlib::json`.
+
+2017-01-12  Kirit Saelensminde  <kirit@felspar.com>
+ Removed the old `parser_lock` which is no longer needed.
+
+2017-01-11  Kirit Saelensminde  <kirit@felspar.com>
+ Fix the matcher so it properly decodes the file spec parts from their URL encoding.
+
+2017-01-03  Kirit Saelensminde  <kirit@felspar.com>
+ Switch to the new version of Boost Spirit. Drop support for Boost version prior to !.59.
+
+2016-09-29  Kirit Saelensminde  <kirit@felspar.com>
+ Add default lookups for the Postgres connection string parameters.
+
+2016-09-18  Kirit Saelensminde  <kirit@felspar.com>
+ Set the remote address as `fostgres.remote_addr` on the database connection.
+
+2016-09-14  Kirit Saelensminde  <kirit@felspar.com>
+ Set source address on the network connection when possible.
+
+2016-09-11  Kirit Saelensminde  <kirit@felspar.com>
+ The test script can now check CSJ results are what is expected.
+
+2016-09-09  Kirit Saelensminde  <kirit@felspar.com>
+ Can configure a zone info on the view to control which time zone to use.
+
+2016-09-06  Kirit Saelensminde  <kirit@felspar.com>
+ * Logging options can be set for fostgres-test.
+ * The fostgres-test testserver can now be given header values to use for all requests.
+
+2016-09-04  Kirit Saelensminde  <kirit@felspar.com>
+ fostgres-test only turns `not_implemented` exceptions into 501s if that is the expected response.
+
+2016-09-03  Kirit Saelensminde  <kirit@felspar.com>
+ * Add a command for running SQL from a file.
+ * Add a language extension mechanism.
+
+2016-08-28  Kirit Saelensminde  <kirit@felspar.com>
+ Object PUT support can now have confiugrations for multiple tables.
+
+2016-08-28  Kirit Saelensminde  <kirit@felspar.com>
+ Add DELETE support and a scripting language for testing the views.
+
+2016-08-14  Kirit Saelensminde  <kirit@felspar.com>
+ Deprecate the old configuration for JSON based PATCH.
+
+2016-07-30  Kirit Saelensminde  <kirit@felspar.com>
+ SQL can be run with a list of JSON arguments.
+
+2016-07-29  Kirit Saelensminde  <kirit@felspar.com>
+ Add a connection factory function that can read some values from the request.
+
+2016-03-25  Kirit Saelensminde  <kirit@felspar.com>
+ Basic implementation of CSJ and JSON options for views that fetch data from the database.
+
+2015-09-23  Kirit Saelensminde  <kirit@felspar.com>
+ Added ChangeLog

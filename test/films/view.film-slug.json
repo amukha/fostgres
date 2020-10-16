@@ -1,0 +1,186 @@
+{
+    "webserver" : {
+        "views/film.slug": {
+            "view": "fostgres.sql",
+            "configuration": {
+                "sql": [
+                    {
+                        "return": "object",
+                        "path": [1],
+                        "GET": "SELECT * FROM films_view WHERE slug=$1",
+                        "PUT": {
+                            "table": "films",
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "slug": {"type": "string"},
+                                    "title": {"type": "string"},
+                                    "released": {"type": "string"},
+                                    "length_minutes": {"type": ["integer", "null"]}
+                                },
+                                "required": ["title", "released"]
+                            },
+                            "columns": {
+                                "slug": {
+                                    "key":  true,
+                                    "source": 1
+                                },
+                                "title": {
+                                    "schema": {
+                                        "type": "string",
+                                        "minLength": 1
+                                    }
+                                },
+                                "released": {},
+                                "length_minutes": {}
+                            }
+                        },
+                        "PATCH": {
+                            "table": "films",
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "slug": {"type": "string"},
+                                    "title": {"type": "string"},
+                                    "released": {"type": "string"},
+                                    "length_minutes": {"type": "integer"}
+                                }
+                            },
+                            "columns": {
+                                "slug": {
+                                    "key":  true,
+                                    "source": 1
+                                },
+                                "title": {
+                                    "schema": {
+                                        "type": "string",
+                                        "minLength": 1
+                                    }
+                                },
+                                "released": {},
+                                "length_minutes": {}
+                            }
+                        },
+                        "DELETE": "DELETE FROM films WHERE slug=$1"
+                    },
+                    {
+                        "path": [1, "/tags"],
+                        "GET": "SELECT slug as tag FROM film_tags WHERE film_slug=$1 ORDER BY tag",
+                        "PUT": {
+                            "table": "film_tags",
+                            "existing": "SELECT slug FROM film_tags WHERE film_slug=$1",
+                            "delete": "DELETE FROM film_tags WHERE film_slug=$1 AND slug=$2",
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "tag": {"type": "string"}
+                                },
+                                "additionalProperties": false
+                            },
+                            "columns": {
+                                "film_slug": {
+                                    "key": true,
+                                    "source": 1
+                                },
+                                "slug": {
+                                    "key": true,
+                                    "source": "tag",
+                                    "schema": {
+                                        "minLength": 3
+                                    }
+                                }
+                            }
+                        },
+                        "PATCH": {
+                            "table": "film_tags",
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "tag": {"type": "string"}
+                                },
+                                "additionalProperties": false
+                            },
+                            "columns": {
+                                "film_slug": {
+                                    "key": true,
+                                    "source": 1
+                                },
+                                "slug": {
+                                    "key": true,
+                                    "source": "tag",
+                                    "schema": {
+                                        "minLength": 3
+                                    }
+                                }
+                            }
+                        },
+                        "DELETE": "DELETE FROM film_tags WHERE film_slug=$1"
+                    },
+                    {
+                        "return": "object",
+                        "path": [1, "/tag", 2],
+                        "GET": "SELECT slug as tag FROM film_tags WHERE film_slug=$1 AND slug=$2",
+                        "PUT": {
+                            "table": "film_tags",
+                            "columns": {
+                                "film_slug": {
+                                    "key": true,
+                                    "source": 1
+                                },
+                                "slug": {
+                                    "key": true,
+                                    "source": 2
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "return": "object",
+                        "path": [1, "/watched"],
+                        "POST": {
+                            "table": "film_watched",
+                            "columns": {
+                                "film_slug": {
+                                    "source": 1
+                                },
+                                "who": {}
+                            },
+                            "returning": ["watched"]
+                        }
+                    },
+                    {
+                        "path": [],
+                        "GET": "SELECT
+                                slug, title, released, length_minutes, created, watched__last, watched__times
+                            FROM films_view ORDER BY slug",
+                        "PATCH": {
+                            "table": "films",
+                            "columns": {
+                                "slug": {
+                                    "key": true
+                                },
+                                "title": {},
+                                "released": {"insert": "required"},
+                                "length_minutes": {"insert": "required"}
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        "views/film.slug.error": {
+            "view": "fostgres.control.pg-error",
+            "configuration": {
+                "execute": "film.slug",
+                "23502": "fost.response.500"
+            }
+        },
+        "views/film.slug.error.missing.execute": {
+            "view": "fostgres.control.pg-error",
+            "configuration": {
+                "view": "film.slug"
+            }
+        }
+    }
+}
+
